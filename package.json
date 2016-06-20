@@ -1,0 +1,29 @@
+{
+  "name": "todolist",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "Joe Viscardi",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.15.1",
+    "config": "^1.21.0",
+    "dotenv": "^2.0.0",
+    "ejs": "^2.4.2",
+    "express": "^4.14.0",
+    "grunt": "^1.0.1",
+    "mongoose": "^4.5.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "grunt-contrib-jshint": "^1.0.0",
+    "grunt-contrib-requirejs": "^1.0.0",
+    "grunt-env": "^0.4.4",
+    "mocha": "^2.5.3",
+    "should": "^9.0.2",
+    "supertest": "^1.2.0"
+  }
+}
