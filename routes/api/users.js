@@ -18,11 +18,15 @@ router.get('/',  function(req, res){
 //return the id of the username we logged in with if it's succesful
 router.post("/login", passport.authenticate('local'), function(req, res){
     //first get the user
-    User.findOne({name: new RegExp('^'+req.body.name+'$', "i")}, function(err, user) {
-        if(doc.password === req.body.password){
-            //if our password matches what the doc is, then we can send the whole doc to the client.
-            res.json(user);
+    if(err){
+        return console.log(err);
+    }
+    User.findById(req.user.id, function(err, user){
+        if(err){
+            return console.log(err);
         }
+       //if we succesfully log in we want to send the users data to the client.
+        res.json(user);
     });
 })
 
