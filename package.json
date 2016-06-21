@@ -9,13 +9,16 @@
   "author": "Joe Viscardi",
   "license": "MIT",
   "dependencies": {
+    "bcryptjs": "^2.3.0",
     "body-parser": "^1.15.1",
     "config": "^1.21.0",
     "dotenv": "^2.0.0",
     "ejs": "^2.4.2",
     "express": "^4.14.0",
     "grunt": "^1.0.1",
-    "mongoose": "^4.5.0"
+    "mongoose": "^4.5.0",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",

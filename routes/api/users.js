@@ -1,8 +1,10 @@
 var express = require('express');
 var router = express.Router();
+var passport = require('./../../passport_auth');
 
 //get our models
 var User = require('./../../models/user');
+var bcrypt = require('bcryptjs');
 
 router.get('/',  function(req, res){
    User.find(function(err, users){
@@ -13,6 +15,18 @@ router.get('/',  function(req, res){
    })
 });
 
+//return the id of the username we logged in with if it's succesful
+router.post("/login", passport.authenticate('local'), function(req, res){
+    //first get the user
+    User.findOne({name: new RegExp('^'+req.body.name+'$', "i")}, function(err, user) {
+        if(doc.password === req.body.password){
+            //if our password matches what the doc is, then we can send the whole doc to the client.
+            res.json(user);
+        }
+    });
+})
+
+//get the user's document
 router.get('/:user_id', function(req, res) {
     User.findById(req.params.user_id, function(err, user){
         if(err){
@@ -22,21 +36,23 @@ router.get('/:user_id', function(req, res) {
     })
 });
 
-//update the user
-router.put('/:user_id/add_task', function(req, res) {
+//create a task
+router.put('/:user_id/tasks', function(req, res) {
     User.findById(req.params.user_id, function(err, user){
         if(err){
             res.send(err);
             return err;
         }
 
+        //gonna have to do a check to make sure it's the user we're authenticated with..
+
         var new_task = {
-            "task_name": req.body.task_name,
-            "task_importance": req.body.importance,
-            "task_completed": false
+            "name": req.body.task_name,
+            "importance": req.body.importance,
+            "completed": false
         }
 
-        user.todolist.push(new_task);
+        user.tasks.push(new_task);
 
         user.save(function(err){
             if(err)
@@ -49,7 +65,8 @@ router.put('/:user_id/add_task', function(req, res) {
     })
 });
 
-router.put('/:user_id/edit_task/:task_index', function(req, res) {
+//edit a task
+router.put('/:user_id/tasks/:task_id', function(req, res) {
     User.findById(req.params.user_id, function(err, user) {
         if (err) {
             res.send(err);
@@ -82,28 +99,37 @@ router.put('/:user_id/edit_task/:task_index', function(req, res) {
 
 
 //create a user
-router.post('/',  function(req, res){
+router.post('/register',  function(req, res){
     var user = new User();
     user.name = req.body.name;
     user.password = req.body.password;
-    //todolist will keep an array of objects representing the list.
     user.todolist = [];
-    user.save(function(err){
-        if(err){
-            if(err.message === "E11000 duplicate key error index: test.users.$name_1 dup key: { : \"" + user.name + "\" }"){
-                res.json({
-                    error: "name already taken"
-                });
-            }else{
-                res.json({
-                    error: "There was an error processing your registration."
-                });
-                console.log(err.message);
-            }
-            return(err);
-        }
-        res.json({user: user});
-    })
+
+    //hash the password
+    bcrypt.genSalt(10, function(err, salt) {
+        bcrypt.hash(user.password, salt, function(err, hash) {
+            user.password = hash;
+            user.save(function(err){
+                if(err){
+                    if(err.message === "E11000 duplicate key error index: test.users.$name_1 dup key: { : \"" + user.name + "\" }"){
+                        res.json({
+                            error: "name already taken"
+                        });
+                    }else{
+                        res.json({
+                            error: "There was an error processing your registration."
+                        });
+                        console.log(err.message);
+                    }
+                    return(err);
+                }
+                res.json({user: user});
+            })
+        });
+    });
+
+    //todolist will keep an array of objects representing the list.
+
 });
 
 router.delete('/:user_id',function(req, res) {

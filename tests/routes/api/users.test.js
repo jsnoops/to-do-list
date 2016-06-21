@@ -14,9 +14,9 @@ var request = require('supertest')(myApp);
 
 describe('User APIs', function () {
     describe('POST /api/users/', function () {
-        it('should add a user with the username joe and password 123', function (done) {
+        it('should add a user with the username joe and hashed password 123', function (done) {
             request
-                .post('/api/users/')
+                .post('/api/users/register')
                 .send({name: "joe", password: "123"})
                 .expect('Content-Type', /json/)
                 .expect(200) //Status code
@@ -30,9 +30,9 @@ describe('User APIs', function () {
 
                     //check if user's properties get set correctly
                     res.body.user.name.should.equal('joe');
-                    res.body.user.password.should.equal('123');
-                    res.body.user.todolist.length.should.equal(0);
-                    res.body.user.todolist.length.should.not.equal(1);
+                    res.body.user.password.should.not.equal('123');
+                    res.body.user.tasks.length.should.equal(0);
+                    res.body.user.tasks.length.should.not.equal(1);
 
                     done();
                 });
@@ -40,7 +40,7 @@ describe('User APIs', function () {
 
         it("should give a json with an error 'name already taken' when we try submitting another user with the name 'joe'", function (done) {
             request
-                .post('/api/users/')
+                .post('/api/users/register')
                 .send({name: "joe", password: "123"})
                 .expect('Content-Type', /json/)
                 .expect(200) //Status code
