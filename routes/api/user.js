@@ -6,26 +6,20 @@ var passport = require('./../../passport_auth');
 var User = require('./../../models/user');
 var bcrypt = require('bcryptjs');
 
-router.get('/',  function(req, res){
-   User.find(function(err, users){
-       if(err){
-           res.send(err);
-       }
-       res.json({users: users})
-   })
-});
-
 //return the id of the username we logged in with if it's succesful
 router.post("/login", passport.authenticate('local'), function(req, res){
     //first get the user
     if(err){
+        console.log('the error:', err.message);
         return console.log(err);
     }
     User.findById(req.user.id, function(err, user){
         if(err){
+            console.log('the error2:', err.message);
             return console.log(err);
         }
        //if we succesfully log in we want to send the users data to the client.
+        console.log('sending the user json');
         res.json(user);
     });
 })
@@ -105,17 +99,18 @@ router.put('/:user_id/tasks/:task_id', function(req, res) {
 //create a user
 router.post('/register',  function(req, res){
     var user = new User();
-    user.name = req.body.name;
-    user.password = req.body.password;
+    console.log('the user id:', user.id);
+    user.username = req.body.username;
     user.todolist = [];
 
     //hash the password
     bcrypt.genSalt(10, function(err, salt) {
-        bcrypt.hash(user.password, salt, function(err, hash) {
+        bcrypt.hash(req.body.password, salt, function(err, hash) {
             user.password = hash;
             user.save(function(err){
                 if(err){
-                    if(err.message === "E11000 duplicate key error index: test.users.$name_1 dup key: { : \"" + user.name + "\" }"){
+                    console.log(err.message);
+                    if(err.message === "E11000 duplicate key error index: test.users.$name_1 dup key: { : \"" + user.username + "\" }"){
                         res.json({
                             error: "name already taken"
                         });
@@ -123,7 +118,6 @@ router.post('/register',  function(req, res){
                         res.json({
                             error: "There was an error processing your registration."
                         });
-                        console.log(err.message);
                     }
                     return(err);
                 }
