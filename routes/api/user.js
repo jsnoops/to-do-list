@@ -9,18 +9,15 @@ var bcrypt = require('bcryptjs');
 //return the id of the username we logged in with if it's succesful
 router.post("/login", passport.authenticate('local'), function(req, res){
     //first get the user
-    if(err){
-        console.log('the error:', err.message);
-        return console.log(err);
-    }
     User.findById(req.user.id, function(err, user){
         if(err){
             console.log('the error2:', err.message);
             return console.log(err);
         }
        //if we succesfully log in we want to send the users data to the client.
-        console.log('sending the user json');
-        res.json(user);
+        console.log('putting the user in the req session:', req.user);
+        console.log('sending the user to the client:', user)
+        res.json({"id": user.id});
     });
 })
 
@@ -109,10 +106,9 @@ router.post('/register',  function(req, res){
             user.password = hash;
             user.save(function(err){
                 if(err){
-                    console.log(err.message);
-                    if(err.message === "E11000 duplicate key error index: test.users.$name_1 dup key: { : \"" + user.username + "\" }"){
+                    if(err.message === "E11000 duplicate key error index: test.users.$username_1 dup key: { : \"" + user.username + "\" }"){
                         res.json({
-                            error: "name already taken"
+                            error: "Username already in use."
                         });
                     }else{
                         res.json({

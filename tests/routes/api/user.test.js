@@ -46,7 +46,7 @@ describe('User APIs', function () {
                 .expect(200) //Status code
                 .end(function(err,res) {
                     res.body.should.have.property('error');
-                    res.body.error.should.equal("username already taken");
+                    res.body.error.should.equal("Username already in use.");
                     done();
                 });
         });
