@@ -30,17 +30,15 @@ var port = process.env.PORT || 8080;        // set our port
 // =============================================================================
 var router = express.Router();              // get an instance of the express Router
 
-var user = require('./routes/api/user')
+var userAPI = require('./routes/api/user')
+var authenticationAPI = require('./routes/api/authentication')
 
 
 
-app.use('/api/user', user);
 
-// more routes for our API will happen here
+app.use('/api/user', userAPI);
+app.use('/api/authentication', authenticationAPI);
 
-// REGISTER OUR ROUTES -------------------------------
-// all of our routes will be prefixed with /api
-app.use('/api', router);
 
 //get our db config values
 var dbConfig = config.get("dbConfig");

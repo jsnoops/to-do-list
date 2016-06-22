@@ -19,6 +19,7 @@ passport.use(new LocalStrategy.Strategy(function(username, password, done) {
                 throw err;
             }
             if (isMatch) {
+                //the properties we put in this object are the properties that will be given to req.user
                 return done(null, {id: user._id, username: user.username});
             } else {
                 return done(null, false, {message: 'Invalid password'});

@@ -16,7 +16,7 @@ describe('User APIs', function () {
     describe('POST /api/authentication/register', function () {
         it('should add a user with the username joe and hashed password 123', function (done) {
             request
-                .post('/api/user/register')
+                .post('/api/authentication/register')
                 .send({username: "joe", password: "123"})
                 .expect('Content-Type', /json/)
                 .expect(200) //Status code
@@ -40,7 +40,7 @@ describe('User APIs', function () {
 
         it("should give a json with an error 'name already taken' when we try submitting another user with the name 'joe'", function (done) {
             request
-                .post('/api/user/register')
+                .post('/api/authentication/register')
                 .send({username: "joe", password: "123"})
                 .expect('Content-Type', /json/)
                 .expect(200) //Status code
@@ -52,10 +52,10 @@ describe('User APIs', function () {
         });
     });
 
-    describe('POST /api/user/login', function () {
+    describe('POST /api/authentication/login', function () {
         it('should send an id to user if the login is succesful', function (done) {
             request
-                .post('/api/user/login')
+                .post('/api/authentication/login')
                 .send({username: "joe", password: "123"})
                 .expect('Content-Type', /json/)
                 .expect(200) //Status code
